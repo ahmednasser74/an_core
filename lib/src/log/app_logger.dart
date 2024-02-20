@@ -2,7 +2,8 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:log_package/log_package.dart';
+
+import '../packages/index.dart';
 
 class AppLogger extends Interceptor {
   static bool isProd = false;
