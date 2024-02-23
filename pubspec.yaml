@@ -8,13 +8,14 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
+  device_info_plus: ^9.1.2
   dio: ^5.4.1
   flutter:
     sdk: flutter
   get_it: ^7.6.7
   injectable: ^2.3.2
-  # log_package:
-  #   path: packages/log_package
+  package_info_plus: ^5.0.1
+  permission_handler: ^11.3.0
   shared_preferences: ^2.2.2
 
 dev_dependencies:

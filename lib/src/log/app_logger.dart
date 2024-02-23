@@ -75,17 +75,18 @@ class AppLogger extends Interceptor {
     super.onRequest(options, handler);
   }
 
-  // @override
-  // void onError(DioError err, ErrorInterceptorHandler handler) {
-  //   super.onError(err, handler);
-  // }
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    error(err.message, err.stackTrace);
+    super.onError(err, handler);
+  }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     final uri = response.requestOptions.uri;
     final method = response.requestOptions.method;
 
-    logApi(method, uri.toString(), response: response.data);
+    logApi(method, uri.toString(), response: response.data, body: response.requestOptions.data);
 
     // final responseHeaders = <String, String>{};
     // response.headers.forEach((k, list) => responseHeaders[k] = list.toString());
