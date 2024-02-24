@@ -70,7 +70,9 @@ class AppLogger extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    logApi('Request: ${options.method}', options.uri.origin + options.uri.path, body: options.data ?? {});
+    final uri = options.uri;
+    final queryParam = uri.query.isEmpty ? '' : '?${uri.query}';
+    logApi('Request: ${options.method}', uri.origin + uri.path + queryParam, body: options.data ?? {});
 
     super.onRequest(options, handler);
   }

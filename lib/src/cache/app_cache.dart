@@ -1,17 +1,20 @@
 import 'dart:convert';
+import 'package:an_core_network/an_core_network.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:injectable/injectable.dart';
 
 abstract class AppCache {
   T? get<T>(String key);
 
-  // Future<AppResponse<T>?>? getObjectFromJson<T extends BaseResponse<T>>({required dynamic object, required key});
+  BaseResponse? getObject(BaseResponse object, key);
 
   bool has(String key);
 
   void clear(String key);
 
   void set(String key, dynamic value);
+
+  void setObject(String key, dynamic value);
 }
 
 @Injectable(as: AppCache)
@@ -45,5 +48,24 @@ class AppCacheImpl implements AppCache {
   @override
   void set(String key, dynamic value) {
     _sharedPreferences.setString(key, jsonEncode(value));
+  }
+
+  @override
+  void setObject(String key, dynamic object) async {
+    //* Make sure `toJson` implements
+    final parse = jsonEncode(await object.toJson());
+    _sharedPreferences.setString(key, parse);
+  }
+
+  @override
+  BaseResponse? getObject(BaseResponse object, key) {
+    if (has(key)) {
+      final jsonString = _sharedPreferences.getString(key);
+      final jsonMap = jsonDecode(jsonString!);
+      final response = object.fromJson(jsonMap);
+      return response;
+    } else {
+      return null;
+    }
   }
 }
