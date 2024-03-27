@@ -1,12 +1,12 @@
 import 'dart:convert';
-import 'package:an_core_network/an_core_network.dart';
+// import 'package:an_core_network/an_core_network.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:injectable/injectable.dart';
 
 abstract class AppCache {
   T? get<T>(String key);
 
-  BaseResponse? getObject(BaseResponse object, key);
+  T? getObject<T>(dynamic object, key);
 
   bool has(String key);
 
@@ -58,7 +58,7 @@ class AppCacheImpl implements AppCache {
   }
 
   @override
-  BaseResponse? getObject(BaseResponse object, key) {
+  T? getObject<T>(dynamic object, key) {
     if (has(key)) {
       final jsonString = _sharedPreferences.getString(key);
       final jsonMap = jsonDecode(jsonString!);
