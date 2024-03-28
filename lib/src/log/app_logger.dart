@@ -29,11 +29,11 @@ class AppLogger extends Interceptor {
       );
     }
   }
-  String jsonToString(Map<String?, dynamic> json) {
+  String jsonToString(Object json) {
     return const JsonEncoder.withIndent('  ').convert(json);
   }
 
-  void logApi(String apiType, String path, {Map<String?, dynamic>? body, Map<String?, dynamic>? response}) {
+  void logApi(String apiType, String path, {Object? body, Map<String?, dynamic>? response}) {
     if (isProd) return;
     // final now = DateTime.now();
     // final time = '${now.monthAndDay}-${now.time24Only}';
@@ -72,7 +72,8 @@ class AppLogger extends Interceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     final uri = options.uri;
     final queryParam = uri.query.isEmpty ? '' : '?${uri.query}';
-    logApi('Request: ${options.method}', uri.origin + uri.path + queryParam, body: options.data ?? {});
+    final body = options.data is FormData ? {'fields': options.data.fields.toString()} : options.data;
+    logApi('Request: ${options.method}', uri.origin + uri.path + queryParam, body: body);
 
     super.onRequest(options, handler);
   }
