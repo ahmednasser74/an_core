@@ -33,7 +33,7 @@ class AppLogger extends Interceptor {
     return const JsonEncoder.withIndent('  ').convert(json);
   }
 
-  void logApi(String apiType, String path, {dynamic body, Object? response}) {
+  void logApi(String apiType, String path, {dynamic body, Object? response, String? headers}) {
     if (isProd) return;
     // final now = DateTime.now();
     // final time = '${now.monthAndDay}-${now.time24Only}';
@@ -50,8 +50,8 @@ class AppLogger extends Interceptor {
       }
       return '\nBody:$body';
     }();
-
-    return debug('$apiType $path$printedBody$printResponse ');
+    final printedHeaders = headers != null ? '\nHeaders: $headers' : '';
+    return debug('$apiType $path$printedBody$printResponse$printedHeaders');
   }
 
   void showDebugger(BuildContext context) {
@@ -88,7 +88,12 @@ class AppLogger extends Interceptor {
       final uri = options.uri;
       final queryParam = uri.query.isEmpty ? '' : '?${uri.query}';
       final body = options.data is FormData ? {'fields': options.data.fields.toString()} : options.data;
-      logApi('Request: ${options.method}', uri.origin + uri.path + queryParam, body: body);
+      var printedHeaders = '';
+      options.headers.forEach((key, value) {
+        printedHeaders += '\n$key: $value';
+      });
+
+      logApi('Request: ${options.method}', uri.origin + uri.path + queryParam, body: body, headers: printedHeaders);
     } catch (error) {
       this.error('Error in logging request: $error', StackTrace.current);
       throw Exception('Error in logging request: $error');
