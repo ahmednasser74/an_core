@@ -52,9 +52,13 @@ class AppCacheImpl implements AppCache {
 
   @override
   void setObject(String key, dynamic object) async {
-    //* Make sure `toJson` implements
-    final parse = jsonEncode(await object.toJson());
-    _sharedPreferences.setString(key, parse);
+    try {
+      //* Make sure `toJson` implements
+      final parse = jsonEncode(await object.toJson());
+      _sharedPreferences.setString(key, parse);
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override

@@ -1,54 +1,66 @@
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:injectable/injectable.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+@LazySingleton()
 class AppDeviceService {
-  static Future<bool> get isAndroidSdkLowerThan33 async {
-    final androidInfo = await DeviceInfoPlugin().androidInfo;
-    return androidInfo.version.sdkInt < 33;
+  late AndroidDeviceInfo _androidInfo;
+  late IosDeviceInfo _iosInfo;
+  late PackageInfo _appInfo;
+  AppDeviceService() {
+    init();
   }
 
-  static Future<({String name, String version, String deviceType, String deviceModel})> get deviceInfo async {
-    String name, version, deviceType, deviceModel;
+  Future<void> init() async {
     final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      _androidInfo = await deviceInfoPlugin.androidInfo;
+    } else if (Platform.isIOS) {
+      _iosInfo = await deviceInfoPlugin.iosInfo;
+    }
+    _appInfo = await PackageInfo.fromPlatform();
+  }
+
+  ({String name, String version, String deviceType, String deviceModel, String deviceIdentifier}) get deviceInfo {
+    String name, version, deviceType, deviceModel, deviceIdentifier;
 
     if (Platform.isAndroid) {
-      final androidInfo = await deviceInfoPlugin.androidInfo;
-      name = androidInfo.model;
-      version = androidInfo.version.release;
+      name = _androidInfo.model;
+      version = _androidInfo.version.release;
       deviceType = 'Android';
-      deviceModel = androidInfo.model;
-      return (name: name, version: version, deviceType: deviceType, deviceModel: deviceModel);
+      deviceModel = _androidInfo.model;
+      deviceIdentifier = _androidInfo.id;
+      return (name: name, version: version, deviceType: deviceType, deviceModel: deviceModel, deviceIdentifier: deviceIdentifier);
     } else if (Platform.isIOS) {
-      final iosInfo = await deviceInfoPlugin.iosInfo;
-      name = iosInfo.name;
-      version = iosInfo.systemVersion;
+      name = _iosInfo.name;
+      version = _iosInfo.systemVersion;
       deviceType = 'iOS';
-      deviceModel = iosInfo.model;
-      return (name: name, version: version, deviceType: deviceType, deviceModel: deviceModel);
+      deviceModel = _iosInfo.model;
+      deviceIdentifier = _iosInfo.identifierForVendor ?? '';
+      return (name: name, version: version, deviceType: deviceType, deviceModel: deviceModel, deviceIdentifier: deviceIdentifier);
     } else {
       throw UnsupportedError('Unsupported platform');
     }
   }
 
-  static Future<PackageInfo> get _appInfo async => await PackageInfo.fromPlatform();
+  bool get isAndroidSdkLowerThan33 {
+    return _androidInfo.version.sdkInt < 33;
+  }
 
   //* get package or bundle [com.example.app]
-  static Future<String> get packageName async {
-    final app = await _appInfo;
-    return app.packageName;
+  String get packageName {
+    return _appInfo.packageName;
   }
 
   //* get app version [1.0.0]
-  static Future<String> get appVersion async {
-    final app = await _appInfo;
-    return app.version;
+  String get appVersion {
+    return _appInfo.version;
   }
 
   //* get app name [App Name]
-  static Future<String> get appName async {
-    final app = await _appInfo;
-    return app.appName;
+  String get appName {
+    return _appInfo.appName;
   }
 }

@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:permission_handler/permission_handler.dart';
 
-import 'app_device_service.dart';
+import '../index.dart';
 
 class AppPermissionService {
+  static final _appDeviceService = corePackageGetIt<AppDeviceService>();
+
   /// **Android:**
   /// - On Android 13 (API 33) and above, this permission is deprecated and
   /// always returns `PermissionStatus.denied`. Instead use `Permission.photos`,
@@ -18,7 +20,7 @@ class AppPermissionService {
   /// - Access to folders like `Documents` or `Downloads`. Implicitly granted.
   static Future<bool> get isStoragePermissionGranted async {
     PermissionStatus storagePermission;
-    if (await AppDeviceService.isAndroidSdkLowerThan33 || Platform.isIOS) {
+    if (_appDeviceService.isAndroidSdkLowerThan33 || Platform.isIOS) {
       storagePermission = await Permission.storage.request();
     } else {
       storagePermission = await Permission.manageExternalStorage.request();
@@ -38,7 +40,7 @@ class AppPermissionService {
     //* for handling gallery permission for android based on sdk version use storage permission
     //* otherwise use photos permission
     PermissionStatus permission;
-    if (Platform.isAndroid && await AppDeviceService.isAndroidSdkLowerThan33) {
+    if (Platform.isAndroid && _appDeviceService.isAndroidSdkLowerThan33) {
       permission = await Permission.storage.request();
     } else {
       permission = await Permission.photos.request();
