@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'package:an_core/an_core.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
-import '../../an_core.dart';
 import 'dependency_init.config.dart';
 
 final GetIt corePackageGetIt = GetIt.instance;
@@ -13,7 +13,8 @@ final GetIt corePackageGetIt = GetIt.instance;
   asExtension: false, // default
 )
 Future<GetIt> cacheCorePackageConfigDependencies() async {
-  // final instance = AppDeviceService();
-  // await instance.init();
+  final instance = AppDeviceService();
+  await instance.init();
+  corePackageGetIt.registerSingleton<AppDeviceService>(instance);
   return $initGetIt(corePackageGetIt);
 }

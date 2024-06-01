@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:injectable/injectable.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../index.dart';
 
+@LazySingleton()
 class AppPermissionService {
   static final _appDeviceService = corePackageGetIt<AppDeviceService>();
 

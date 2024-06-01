@@ -13,7 +13,7 @@ import 'package:injectable/injectable.dart' as _i2;
 import 'package:shared_preferences/shared_preferences.dart' as _i4;
 
 import '../cache/app_cache.dart' as _i5;
-import '../services/app_device_service.dart' as _i3;
+import '../services/app_permission_service.dart' as _i3;
 import 'register_module.dart' as _i6;
 
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -28,7 +28,7 @@ Future<_i1.GetIt> $initGetIt(
     environmentFilter,
   );
   final registerModule = _$RegisterModule();
-  gh.lazySingleton<_i3.AppDeviceService>(() => _i3.AppDeviceService());
+  gh.lazySingleton<_i3.AppPermissionService>(() => _i3.AppPermissionService());
   await gh.factoryAsync<_i4.SharedPreferences>(
     () => registerModule.prefs,
     preResolve: true,
