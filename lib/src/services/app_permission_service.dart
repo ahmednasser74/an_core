@@ -22,7 +22,7 @@ class AppPermissionService {
   /// - Access to folders like `Documents` or `Downloads`. Implicitly granted.
   static Future<bool> get isStoragePermissionGranted async {
     PermissionStatus storagePermission;
-    if (_appDeviceService.isAndroidSdkLowerThan33 || Platform.isIOS) {
+    if ((Platform.isAndroid && _appDeviceService.isAndroidSdkLowerThan33) || Platform.isIOS) {
       storagePermission = await Permission.storage.request();
     } else {
       storagePermission = await Permission.manageExternalStorage.request();

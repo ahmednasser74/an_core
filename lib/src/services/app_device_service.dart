@@ -7,9 +7,6 @@ class AppDeviceService {
   late AndroidDeviceInfo _androidInfo;
   late IosDeviceInfo _iosInfo;
   late PackageInfo _appInfo;
-  AppDeviceService() {
-    init();
-  }
 
   Future<void> init() async {
     final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
