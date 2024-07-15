@@ -78,8 +78,8 @@ class AppLogger extends Interceptor {
     Logger.w(message);
   }
 
-  void error(dynamic message, StackTrace trace) {
-    Logger.e('$message \n Trace: $trace');
+  void error(dynamic message, dynamic error) {
+    Logger.e('$message \n Trace: $error');
   }
 
   @override
