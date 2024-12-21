@@ -17,7 +17,7 @@ abstract class AppCache {
   void setObject(String key, dynamic value);
 }
 
-@Injectable(as: AppCache)
+@LazySingleton(as: AppCache)
 class AppCacheImpl implements AppCache {
   final SharedPreferences _sharedPreferences;
 

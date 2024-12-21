@@ -52,6 +52,18 @@ class AppPermissionService {
     return false;
   }
 
+  static Future<bool> get isMicrophonePermissionGranted async {
+    final permission = await Permission.microphone.request();
+    if (permission.isGranted) return true;
+    if (permission.isPermanentlyDenied) {
+      // Handle the case when the permission is permanently denied
+      // You might want to show a dialog to the user explaining why the permission is needed
+      // and direct them to the app settings to enable the permission manually.
+      return false;
+    }
+    return false;
+  }
+
   static Future<bool> get isCameraPermissionGranted async {
     final permission = await Permission.camera.request();
     return permission.isGranted;
