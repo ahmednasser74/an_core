@@ -1,1 +1,0 @@
-bool get supportsAnsiColor => false;
