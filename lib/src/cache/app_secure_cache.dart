@@ -1,5 +1,8 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+// app_cache_secure_impl.dart
+import 'dart:convert';
 import 'package:injectable/injectable.dart';
+import '../services/app_encrypt_service.dart';
+import 'app_cache.dart';
 
 abstract class AppSecureCache {
   Future<void> set(String key, dynamic value);
@@ -13,32 +16,42 @@ abstract class AppSecureCache {
 
 @LazySingleton(as: AppSecureCache)
 class AppCacheSecureImpl implements AppSecureCache {
-  AppCacheSecureImpl();
+  final AppCache _cache;
+  final AppEncryptService _encryptService;
 
-  final storage = const FlutterSecureStorage();
-
-  @override
-  Future<bool> has(String key) async {
-    return (await storage.read(key: key)) != null;
-  }
+  AppCacheSecureImpl(this._cache, this._encryptService);
 
   @override
-  Future<void> clear(String key) async {
-    await storage.delete(key: key);
+  Future<void> set(String key, dynamic value) async {
+    final plain = jsonEncode(value);
+    final encrypted = _encryptService.encrypt(plain);
+    _cache.set(key, encrypted);
   }
 
   @override
   Future<T?> get<T>(String key) async {
-    final value = await storage.read(key: key);
-    if (value != null) {
-      return value as T;
-    } else {
-      return null;
+    if (!_cache.has(key)) return null;
+
+    final encrypted = _cache.get<String>(key);
+    if (encrypted == null) return null;
+
+    final decrypted = _encryptService.decrypt(encrypted);
+
+    try {
+      final decoded = jsonDecode(decrypted);
+      return decoded as T;
+    } catch (_) {
+      return decrypted as T;
     }
   }
 
   @override
-  Future<void> set(String key, dynamic value) async {
-    await storage.write(key: key, value: value);
+  Future<bool> has(String key) async {
+    return _cache.has(key);
+  }
+
+  @override
+  Future<void> clear(String key) async {
+    _cache.clear(key);
   }
 }
