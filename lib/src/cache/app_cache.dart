@@ -14,7 +14,7 @@ abstract class AppCache {
 
   void set(String key, dynamic value);
 
-  void setObject(String key, dynamic value);
+  Future<void> setObject(String key, dynamic value);
 }
 
 @LazySingleton(as: AppCache)
@@ -51,11 +51,11 @@ class AppCacheImpl implements AppCache {
   }
 
   @override
-  void setObject(String key, dynamic object) async {
+  Future<void> setObject(String key, dynamic object) async {
     try {
       //* Make sure `toJson` implements
-      final parse = jsonEncode(await object.toJson());
-      _sharedPreferences.setString(key, parse);
+      final jsonString = jsonEncode(object.toJson());
+      await _sharedPreferences.setString(key, jsonString);
     } catch (e) {
       print(e);
     }

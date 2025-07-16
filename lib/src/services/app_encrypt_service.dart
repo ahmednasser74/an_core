@@ -1,5 +1,7 @@
 // app_encrypt_service.dart
 import 'dart:convert';
+import 'dart:typed_data';
+import 'package:crypto/crypto.dart';
 
 class AppEncryptService {
   final String _secretKey = '!q?uA9>R@2co{X#8t';
@@ -34,5 +36,10 @@ class AppEncryptService {
     }
 
     return String.fromCharCodes(result);
+  }
+
+  String sha256Digest(Uint8List bytes) {
+    final hash = sha256.convert(bytes);
+    return base64.encode(hash.bytes);
   }
 }
